@@ -1,3 +1,0 @@
-Auger OpenSCAD Library (https://www.thingiverse.com/thing:96462) by wtgibson is licensed under the GNU - GPL license.
-http://creativecommons.org/licenses/GPL/2.0/
-
