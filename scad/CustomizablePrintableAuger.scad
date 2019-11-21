@@ -77,8 +77,14 @@ module tube() {
         }
         translate([0,0,1])
             cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 180); 
+        /**
+         * skittle hole
+         */
         translate([0,20,15])
             cube([40,15,20], center = true);
+        /**
+         * trap door holes
+         */
         translate([0,-20,70])
             cube([40,15,20], center = true);
         translate([0,-20,100])
@@ -94,14 +100,27 @@ module servo_rail() {
     translate([-20,2,52]){
         difference() {
             union() {
-                cube([22,27,15], center=true);
-                translate([0,7,12])
+                //side clips
+                cube([24,27,15], center=true);
+                // top stop
+                translate([0,7,15])
                     cube([22,7,2], center=true);
             }
-            cube([23,23,16], center=true);
+            // hollow out clips
+            cube([26,23,16], center=true); 
+            // make room for wires
+            translate([0,-5,-5.5])
+                cube([26,23,6], center=true);
         }
-        translate([7,0,0])
-            cube([10,27,15], center=true);
+        // snap 1
+        translate ([0,0,-7.5]) linear_extrude(height=15)
+            polygon( points = [ [-12,11.5], [-11,11.5], [-11,10.5]]);
+        // snap 2
+        translate ([0,0,-2.5]) linear_extrude(height=10)
+            polygon( points = [ [-12,-11.5], [-11,-11.5], [-11,-10.5]]);
+        // flat backing
+        translate([7,0,4.25])
+            cube([10,27,23.5], center=true); 
     }
 }
 
