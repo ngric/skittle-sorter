@@ -1,10 +1,8 @@
+//$fn = 400;
 // Parametric Printable Auger
 // It is licensed under the Creative Commons - GNU GPL license.
 // � 2013 by William Gibson
 // http://www.thingiverse.com/thing:96462
-
-use <utils/build_plate.scad>
-
 
 ////////////
 //Examples//
@@ -62,17 +60,6 @@ Auger_flight_thickness = 3;  //[0.2:Thin, 1:Medium, 10:Thick]
 
 Auger_handedness = "right";  //["right":Right, "left":Left]
 
-/* [Build plate] */
-
-//for display only, doesn't contribute to final object
-build_plate_selector = 3; //[0:Replicator 2,1: Replicator,2:Thingomatic,3:Manual]
-//when Build Plate Selector is set to "manual" this controls the build plate x dimension
-build_plate_manual_x = 200; //[100:400]
-//when Build Plate Selector is set to "manual" this controls the build plate y dimension
-build_plate_manual_y = 200; //[100:400]
-
-build_plate(build_plate_selector,build_plate_manual_x,build_plate_manual_y);
-
 /* [Hidden] */
 
 M_PI = 3.14159;
@@ -80,30 +67,69 @@ mm = 1;
 inch = 25.4 * mm;
 
 //*********************************************************
-$fn = 400;
-difference(){
-    cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 100);    
-    translate([0,0,-1])cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 102); 
+//
+
+module tube() {
+    difference(){
+        union() {
+            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 180);    
+            servo_rail();
+        }
+        translate([0,0,1])
+            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 180); 
+        translate([0,20,15])
+            cube([40,15,20], center = true);
+        translate([0,-20,70])
+            cube([40,15,20], center = true);
+        translate([0,-20,100])
+            cube([40,15,20], center = true);
+        translate([0,-20,130])
+            cube([40,15,20], center = true);
+        translate([0,-20,160])
+            cube([40,15,20], center = true);
+    }
+}
+
+module servo_rail() {
+    translate([-20,2,52]){
+        difference() {
+            union() {
+                cube([22,27,15], center=true);
+                translate([0,7,12])
+                    cube([22,7,2], center=true);
+            }
+            cube([23,23,16], center=true);
+        }
+        translate([7,0,0])
+            cube([10,27,15], center=true);
+    }
+}
+
+difference() {
+    tube();
+    cube([100,100,80], center=true);
+    translate([0,0,130])
+    cube([100,100,120], center=true);
 }
 
 //*********************************************************
 
 
-auger(
-r1 = Auger_shaft_radius,
-r2 = Auger_shaft_radius + Auger_flight_radius,
-h = Auger_flight_length,
-overhangAngle = Printer_overhang_capability,
-multiStart = Auger_num_flights,
-flightThickness = Auger_flight_thickness,
-turns = Auger_twist/360,
-pitch=0,
-supportThickness = Auger_perimeter_thickness,
-handedness=Auger_handedness,
-//$fn=50,
-$fa=12,
-$fs=5
-);
+// auger(
+// r1 = Auger_shaft_radius,
+// r2 = Auger_shaft_radius + Auger_flight_radius,
+// h = Auger_flight_length,
+// overhangAngle = Printer_overhang_capability,
+// multiStart = Auger_num_flights,
+// flightThickness = Auger_flight_thickness,
+// turns = Auger_twist/360,
+// pitch=0,
+// supportThickness = Auger_perimeter_thickness,
+// handedness=Auger_handedness,
+// //$fn=50,
+// $fa=12,
+// $fs=5
+// );
 
 
 
