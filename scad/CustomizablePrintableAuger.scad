@@ -105,17 +105,46 @@ module tube() {
 //tube();
 
 module trap_door() {
+    // section that connects to servo
+    difference() {
+        union() {
+            // outter arc
+            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 5, h = 20, center = true);
+            //horn mount
+            translate([-29,-20,1.5])
+                cube([29,17,4]);
+            translate([-24,-3,1.5])
+                cylinder(h = 4, d = 10);
+        }
+        cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 21, center = true);
+        // extra lip no non-servo side
+        translate([0,-11,-10])
+            cube([30,50,21]);
+        // long piece connection to servo
+        translate([-20,-6.5,-11.5])
+            cube([30,50,21]);
+        // servo mount cutouts - bottom
+        translate([-20,-12.5,-11.5])
+            cube([30,50,12]);
+        // servo mount cutouts - top
+        translate([-20,-12.5,5.5])
+            cube([30,50,10]);
+        // horn cutout
+        translate([-24,-3,5.5]) rotate([0,180,90]) scale([1.06,1.06,1.06])
+            servo_horn();
+    }
+
+    // section that matches holes in tube
     intersection() {
         difference(){
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 20, center = true);
+            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 18, center = true);
             cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 20, center=true);
         }
         translate([0,-20,0])
             cube([40,15,20], center = true);
     }
 }
-
-//trap_door();
+trap_door();
 
 /**
  * single-section horn for blue servo
@@ -123,13 +152,13 @@ module trap_door() {
 module servo_horn() {
     cylinder(h=3.8, d = 7);
     translate([14,0,0])
-        cylinder(h=1.4, d = 4);
+        cylinder(h=1.3, d = 4); // tip
     linear_extrude(height = 1.4)
         //polygon(points = [[0,3.5], [0,-3.5], [14,-2], [14,2]]);
         polygon(points = [[2.3,2.65], [2.3,-2.65], [14,-2], [14,2]]);
 }
+//servo_horn();
 
-servo_horn();
 module servo_rail() {
     translate([-20,2,52]){
         difference() {

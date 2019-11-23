@@ -3,8 +3,7 @@
 - [ ] slightly enlarge servo clips
 - [ ] adjust servo clip placements
 - [X] create servo horn mockup
-- [ ] create placeholder for servo output axes
-- [ ] create trap doors
+- [X] create trap doors
 - [ ] get poc motor code written
 
 === motor ===
