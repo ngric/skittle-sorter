@@ -1,4 +1,4 @@
-//$fn = 400;
+$fn = 400;
 // Parametric Printable Auger
 // It is licensed under the Creative Commons - GNU GPL license.
 // � 2013 by William Gibson
@@ -74,6 +74,12 @@ module tube() {
         union() {
             cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 180);    
             servo_rail();
+            translate([0,0,30])
+                servo_rail();
+            translate([0,0,60])
+                servo_rail();
+            translate([0,0,90])
+                servo_rail();
         }
         translate([0,0,1])
             cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 180); 
@@ -96,6 +102,34 @@ module tube() {
     }
 }
 
+//tube();
+
+module trap_door() {
+    intersection() {
+        difference(){
+            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 20, center = true);
+            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 20, center=true);
+        }
+        translate([0,-20,0])
+            cube([40,15,20], center = true);
+    }
+}
+
+//trap_door();
+
+/**
+ * single-section horn for blue servo
+ */
+module servo_horn() {
+    cylinder(h=3.8, d = 7);
+    translate([14,0,0])
+        cylinder(h=1.4, d = 4);
+    linear_extrude(height = 1.4)
+        //polygon(points = [[0,3.5], [0,-3.5], [14,-2], [14,2]]);
+        polygon(points = [[2.3,2.65], [2.3,-2.65], [14,-2], [14,2]]);
+}
+
+servo_horn();
 module servo_rail() {
     translate([-20,2,52]){
         difference() {
@@ -124,10 +158,10 @@ module servo_rail() {
     }
 }
 
-difference() {
+module clip_test() {
     tube();
     cube([100,100,80], center=true);
-    translate([0,0,130])
+    translate([0,0,150])
     cube([100,100,120], center=true);
 }
 
