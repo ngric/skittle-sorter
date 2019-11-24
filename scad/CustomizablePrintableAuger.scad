@@ -106,7 +106,7 @@ module tube() {
     }
 }
 
-tube();
+//tube();
 
 module trap_door() {
     // section that connects to servo
@@ -170,7 +170,7 @@ module servo_rail() {
                 //side clips
                 cube([24,27,15], center=true);
                 // top stop
-                translate([0,7,15])
+                translate([0,7,16])
                     cube([22,7,2], center=true);
             }
             // hollow out clips
@@ -179,11 +179,14 @@ module servo_rail() {
             translate([0,-5,-5.5])
                 cube([26,23,6], center=true);
         }
-        // snap 1
+        // long side snap
         translate ([0,0,-7.5]) linear_extrude(height=15)
             polygon( points = [ [-12,11.5], [-11,11.5], [-11,10.5]]);
-        // snap 2
+        // short side snap
         translate ([0,0,-2.5]) linear_extrude(height=10)
+            polygon( points = [ [-12,-11.5], [-11,-11.5], [-11,-10.5]]);
+        // top snap
+        translate([1,3.5,3.5]) rotate([-90,0,0]) linear_extrude(height=7)
             polygon( points = [ [-12,-11.5], [-11,-11.5], [-11,-10.5]]);
         // flat backing
         translate([7,0,4.25])
@@ -191,12 +194,18 @@ module servo_rail() {
     }
 }
 
+servo_rail();
+
 module clip_test() {
-    tube();
-    cube([100,100,80], center=true);
-    translate([0,0,150])
-    cube([100,100,120], center=true);
+    difference() {
+        tube();
+        cube([100,100,40], center=true);
+        translate([0,0,115])
+            cube([100,100,130], center=true);
+    }
 }
+
+//clip_test();
 
 //*********************************************************
 
