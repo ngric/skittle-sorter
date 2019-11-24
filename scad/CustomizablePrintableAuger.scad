@@ -73,36 +73,40 @@ module tube() {
     difference(){
         union() {
             cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 180);    
-            servo_rail();
-            translate([0,0,30])
+            translate([0,0,-20])
                 servo_rail();
-            translate([0,0,60])
+            translate([0,0,15])
                 servo_rail();
-            translate([0,0,90])
+            translate([0,0,50])
+                servo_rail();
+            translate([0,0,85])
                 servo_rail();
         }
-        translate([0,0,1])
+
+        //translate([0,0,1]) // seal bottom
             cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 180); 
+
         /**
          * skittle hole
          */
-        translate([0,20,15])
-            cube([40,15,20], center = true);
+        //translate([0,20,15])
+        //    cube([40,15,20], center = true);
+        
         /**
          * trap door holes
          */
-        translate([0,-20,70])
+        translate([0,-20,50])
             cube([40,15,20], center = true);
-        translate([0,-20,100])
+        translate([0,-20,85])
             cube([40,15,20], center = true);
-        translate([0,-20,130])
+        translate([0,-20,120])
             cube([40,15,20], center = true);
-        translate([0,-20,160])
+        translate([0,-20,155])
             cube([40,15,20], center = true);
     }
 }
 
-//tube();
+tube();
 
 module trap_door() {
     // section that connects to servo
@@ -144,7 +148,7 @@ module trap_door() {
             cube([40,15,20], center = true);
     }
 }
-trap_door();
+//trap_door();
 
 /**
  * single-section horn for blue servo
