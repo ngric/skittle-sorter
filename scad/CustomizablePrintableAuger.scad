@@ -41,7 +41,7 @@ Auger_flight_radius = 10; //[5:50]
 Auger_num_flights = 5; //[1:5]
 
 //The height, from top to bottom of the "shaft"
-Auger_flight_length = 205; //[10:200]                           //180+25
+Auger_flight_length = 150; //[10:200]                           //180+25
 
 /* [Printer] */
 
