@@ -3,8 +3,7 @@
 // � 2013 by William Gibson
 // http://www.thingiverse.com/thing:96462
 
-use <utils/build_plate.scad>
-
+// 5 colors in skittle bag
 
 ////////////
 //Examples//
@@ -33,21 +32,21 @@ use <utils/build_plate.scad>
 /* [Auger] */
 
 //The total amount of twist, in degrees
-Auger_twist = 800; //[90:1080]
+Auger_twist = 360; //[90:1080]
 
 //The radius of the auger's "flight" past the shaft
 Auger_flight_radius = 10; //[5:50]
 
 //The number of "flights" 
-Auger_num_flights = 2; //[1:5]
+Auger_num_flights = 5; //[1:5]
 
 //The height, from top to bottom of the "shaft"
-Auger_flight_length = 125; //[10:200]
+Auger_flight_length = 205; //[10:200]                           //180+25
 
 /* [Printer] */
 
 //The overhang angle your printer is capable of
-Printer_overhang_capability = 20; //[0:40]
+Printer_overhang_capability = 30; //[0:40]
 
 //The thickness of perimeter support material
 Auger_perimeter_thickness = 0.0; //[0:None, 0.8:Thin, 2:Thick]
@@ -79,14 +78,58 @@ M_PI = 3.14159;
 mm = 1;
 inch = 25.4 * mm;
 
-//*********************************************************
-$fn = 400;
-difference(){
-    cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 100);    
-    translate([0,0,-1])cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 102); 
-}
+/*---Code by Chaoneng Quan---*/
+$fn = 300;
+tubeHeight= Auger_flight_length - 25;
 
-//*********************************************************
+module tube(){
+difference(){
+    cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = tubeHeight);    
+    translate([0,0,-1])cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = tubeHeight+2); 
+}
+}
+//tube();
+
+shieldHeight = 25;
+module shield(){
+translate([0,0,tubeHeight]) difference(){
+    cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = shieldHeight);
+    translate([0,0,-2])cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = shieldHeight);
+    // round opening 1
+    rotate([0,0,35])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    // round opening 2
+    rotate([0,0,105])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    // round opening 3
+    rotate([0,0,180])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    // round opening 4
+    rotate([0,0,250])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    // round opening 5
+    rotate([0,0,320])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+}
+}
+shield();
+
+tubeCoverHeight = 10;
+module tubeCoverUpper(){
+    translate([0,0,tubeHeight]) difference(){
+        cylinder(r = Auger_flight_radius + Auger_shaft_radius+ 5, h = tubeCoverHeight/2);
+        translate([0,0,-1])cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = tubeCoverHeight/2 +2);
+    }
+}
+tubeCoverUpper();
+
+
+module tubeCoverLower(){
+    translate([0,0,tubeHeight-(tubeCoverHeight/2)-2]) difference(){
+        cylinder(r = Auger_flight_radius + Auger_shaft_radius + 5, h = tubeCoverHeight/2 + 2);
+        translate([0,0,-1])cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3.5, h = tubeCoverHeight/2 +4);
+    }
+}
+tubeCoverLower();
+
+
+/*---end of code---*/
+
 
 
 auger(
