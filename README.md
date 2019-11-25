@@ -1,12 +1,11 @@
-# skittle-sorter
+= # skittle-sorter =
 
 ### todo
 
 - [X] slightly enlarge servo clips
-- [ ] adjust servo clip placements
-    - [ ] drop top snap by ~.5mm
-    - [ ] make all stops ~.25mm shorter
-    - [ ] consider bottom snap
+- [X] adjust servo clip placements
+    - [X] drop top snap by ~.5mm
+    - [X] make all stops ~.25mm shorter
 - [X] create servo horn mockup
 - [X] create trap doors
 - [ ] get poc motor code written
