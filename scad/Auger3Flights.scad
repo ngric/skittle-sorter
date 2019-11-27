@@ -32,16 +32,16 @@
 /* [Auger] */
 
 //The total amount of twist, in degrees
-Auger_twist = 450; //[90:1080]
+Auger_twist = 1080; //[90:1080]
 
 //The radius of the auger's "flight" past the shaft
 Auger_flight_radius = 14; //[5:50]                         // == diameter of a single skittle 
 
 //The number of "flights" 
-Auger_num_flights = 4; //[1:5]
+Auger_num_flights = 3; //[1:5]
 
 //The height, from top to bottom of the "shaft"
-Auger_flight_length = 150; //[10:200]                           
+Auger_flight_length = 180; //[10:200]                           
 
 /* [Printer] */
 
@@ -80,34 +80,36 @@ inch = 25.4 * mm;
 
 /*---Code by Chaoneng Quan---*/
 $fn = 300;
-tubeHeight= Auger_flight_length - 25;
+tubeHeight= Auger_flight_length - 18;
 
 module tube(){
-difference(){
+#difference(){
     cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = tubeHeight);    
     translate([0,0,-1])cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = tubeHeight+2); 
 }
 }
-//tube();
+tube();
 
 shieldHeight = 25;
+openRadius = 8;
+openHeight = 10;
 module shield(){
-translate([0,0,tubeHeight+50]) difference(){
+translate([0,0,tubeHeight]) difference(){
     cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = shieldHeight);
     translate([0,0,-2])cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = shieldHeight);
     // round opening 1
-    rotate([0,0,35])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    rotate([0,0,35])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=openRadius,h=openHeight);
     // round opening 2
-    rotate([0,0,105])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    rotate([0,0,105])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=openRadius,h=openHeight);
     // round opening 3
-    rotate([0,0,180])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    rotate([0,0,180])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=openRadius,h=openHeight);
     // round opening 4
-    rotate([0,0,250])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    rotate([0,0,250])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=openRadius,h=openHeight);
     // round opening 5
-    rotate([0,0,320])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=6,h=5);
+    rotate([0,0,320])translate([Auger_flight_radius + Auger_shaft_radius,0,shieldHeight/2]) rotate([0,90,0])cylinder(r=openRadius,h=openHeight);
 }
 }
-//shield();
+shield();
 
 tubeCoverHeight = 10;
 module tubeCoverUpper(){
