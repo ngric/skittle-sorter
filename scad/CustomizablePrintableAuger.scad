@@ -67,24 +67,23 @@ mm = 1;
 inch = 25.4 * mm;
 
 //*********************************************************
-//
 
-module tube() {
+module tube(id=38) {
     difference(){
         union() {
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 180);    
-            translate([0,0,-20])
-                servo_rail();
-            translate([0,0,15])
-                servo_rail();
-            translate([0,0,50])
-                servo_rail();
-            translate([0,0,85])
-                servo_rail();
+            cylinder(d=id+4, h = 180);    
+            //translate([0,0,-20])
+            //    servo_rail();
+            //translate([0,0,15])
+            //    servo_rail();
+            //translate([0,0,50])
+            //    servo_rail();
+            //translate([0,0,85])
+            //    servo_rail();
         }
 
         //translate([0,0,1]) // seal bottom
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 180); 
+            cylinder(d=id, h = 180); 
 
         /**
          * skittle hole
@@ -106,7 +105,7 @@ module tube() {
     }
 }
 
-//tube();
+tube();
 
 module trap_door() {
     // section that connects to servo
@@ -148,7 +147,6 @@ module trap_door() {
             cube([40,15,20], center = true);
     }
 }
-trap_door();
 
 /**
  * single-section horn for blue servo
