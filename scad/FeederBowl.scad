@@ -34,5 +34,5 @@ module tube(){
 }
 
 module cavity(){
-    cylinder(d=DiameterOfSkittle,h=100,center=true);
+    cylinder(d=DiameterOfSkittle+2,h=100,center=true);
 }
