@@ -110,7 +110,11 @@ module connector(){
 }
 
 module feeder(){
+    difference(){
     translate([0,-Auger_flight_length+90,Auger_shaft_radius + Auger_flight_radius+13])cube([20,180,20],true);
+    translate([0,0,3])translate([0,-Auger_flight_length+90,Auger_shaft_radius + Auger_flight_radius+13])cube([18,176,23],true);
+        
+    }
 }
 
 
