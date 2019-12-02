@@ -68,177 +68,25 @@ inch = 25.4 * mm;
 
 //*********************************************************
 
-module tube(id=38, shole=true) {
-    difference(){
-        union() {
-            cylinder(d=id+4, h = 180);    
-
-            translate([-3,0,-20])
-                servo_rail();
-            translate([-3,0,15])
-                servo_rail();
-            translate([-3,0,50])
-                servo_rail();
-            translate([-3,0,85])
-                servo_rail();
-        }
-
-        translate([0,0,1]) // seal bottom
-            cylinder(d=id, h = 180); 
-
-        /**
-         * skittle hole
-         */
-        if (shole) {
-            translate([0,20,15])
-                cube([20,15,20], center = true);
-        }
-        
-        /**
-         * trap door holes
-         */
-        translate([0,-20,50])
-            cube([30,15,20], center = true);
-        translate([0,-20,85])
-            cube([30,15,20], center = true);
-        translate([0,-20,120])
-            cube([30,15,20], center = true);
-        translate([0,-20,155])
-            cube([30,15,20], center = true);
-    }
-}
-
-//tube();
-
-module test_section() {
-    difference() {
-        tube(shole=false);
-        cube([50,50,49], center=true);
-        translate([0,0,162])
-            cube([100,100,200], center=true);
-        translate([0,0,55])
-            difference() {
-                cylinder(d=38+50, h = 50);
-                cylinder(d=38+4, h = 50);      
-            }
-    }
-}
-
-test_section();
-
-module trap_door() {
-    // section that connects to servo
-    difference() {
-        union() {
-            // outter arc
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 5, h = 20, center = true);
-            //horn mount
-            translate([-29,-20,1.5])
-                cube([29,17,4]);
-            translate([-24,-3,1.5])
-                cylinder(h = 4, d = 10);
-        }
-        cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 21, center = true);
-        // extra lip no non-servo side
-        translate([0,-11,-10])
-            cube([30,50,21]);
-        // long piece connection to servo
-        translate([-20,-6.5,-11.5])
-            cube([30,50,21]);
-        // servo mount cutouts - bottom
-        translate([-20,-12.5,-11.5])
-            cube([30,50,12]);
-        // servo mount cutouts - top
-        translate([-20,-12.5,5.5])
-            cube([30,50,10]);
-        // horn cutout
-        translate([-24,-3,5.5]) rotate([0,180,90]) scale([1.06,1.06,1.06])
-            servo_horn();
-    }
-
-    // section that matches holes in tube
-    intersection() {
-        difference(){
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 18, center = true);
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 20, center=true);
-        }
-        translate([0,-20,0])
-            cube([40,15,20], center = true);
-    }
-}
-
-/**
- * single-section horn for blue servo
- */
-module servo_horn() {
-    cylinder(h=3.8, d = 7);
-    translate([14,0,0])
-        cylinder(h=1.3, d = 4); // tip
-    linear_extrude(height = 1.4)
-        //polygon(points = [[0,3.5], [0,-3.5], [14,-2], [14,2]]);
-        polygon(points = [[2.3,2.65], [2.3,-2.65], [14,-2], [14,2]]);
-}
-//servo_horn();
-
-module servo_rail() {
-    translate([-20,2,52]){
-        difference() {
-            union() {
-                //side clips
-                cube([24,27,15], center=true);
-                // top stop
-                translate([0,7,15.5])
-                    cube([22,7,2], center=true);
-            }
-            // hollow out clips
-            cube([26,23,16], center=true); 
-            // make room for wires
-            translate([0,-5,-5.5])
-                cube([26,23,6], center=true);
-        }
-        // long side snap
-        translate ([.25,0,-7.5]) linear_extrude(height=15)
-            polygon( points = [ [-12,11.5], [-11,11.5], [-11,10.5]]);
-        // short side snap
-        translate ([.25,0,-2.5]) linear_extrude(height=10)
-            polygon( points = [ [-12,-11.5], [-11,-11.5], [-11,-10.5]]);
-        // top snap
-        translate([1.25,3.5,3]) rotate([-90,0,0]) linear_extrude(height=7)
-            polygon( points = [ [-12,-11.5], [-11,-11.5], [-11,-10.5]]);
-        // flat backing
-        translate([7,0,4.25])
-            cube([10,27,23.5], center=true); 
-    }
-}
-
-module clip_test() {
-    difference() {
-        servo_rail();
-        translate([-15,-20,0])
-            cube([100,100,100]);
-    }
-}
-
-//clip_test();
 
 //*********************************************************
 
 
-// auger(
-// r1 = Auger_shaft_radius,
-// r2 = Auger_shaft_radius + Auger_flight_radius,
-// h = Auger_flight_length,
-// overhangAngle = Printer_overhang_capability,
-// multiStart = Auger_num_flights,
-// flightThickness = Auger_flight_thickness,
-// turns = Auger_twist/360,
-// pitch=0,
-// supportThickness = Auger_perimeter_thickness,
-// handedness=Auger_handedness,
-// //$fn=50,
-// $fa=12,
-// $fs=5
-// );
+auger(
+r1 = Auger_shaft_radius,
+r2 = Auger_shaft_radius + Auger_flight_radius,
+h = Auger_flight_length,
+overhangAngle = Printer_overhang_capability,
+multiStart = Auger_num_flights,
+flightThickness = Auger_flight_thickness,
+turns = Auger_twist/360,
+pitch=0,
+supportThickness = Auger_perimeter_thickness,
+handedness=Auger_handedness,
+//$fn=50,
+$fa=12,
+$fs=5
+);
 
 
 
