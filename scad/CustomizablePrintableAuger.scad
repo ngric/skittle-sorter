@@ -1,8 +1,9 @@
-$fn = 400;
 // Parametric Printable Auger
 // It is licensed under the Creative Commons - GNU GPL license.
 // � 2013 by William Gibson
 // http://www.thingiverse.com/thing:96462
+
+// 5 colors in skittle bag
 
 ////////////
 //Examples//
@@ -31,21 +32,21 @@ $fn = 400;
 /* [Auger] */
 
 //The total amount of twist, in degrees
-Auger_twist = 800; //[90:1080]
+Auger_twist = 1080; //[90:1080]
 
 //The radius of the auger's "flight" past the shaft
-Auger_flight_radius = 10; //[5:50]
+Auger_flight_radius = 14; //[5:50]                         // == diameter of a single skittle 
 
 //The number of "flights" 
-Auger_num_flights = 2; //[1:5]
+Auger_num_flights = 3; //[1:5]
 
 //The height, from top to bottom of the "shaft"
-Auger_flight_length = 125; //[10:200]
+Auger_flight_length = 180; //[10:200]                           
 
 /* [Printer] */
 
 //The overhang angle your printer is capable of
-Printer_overhang_capability = 20; //[0:40]
+Printer_overhang_capability = 30; //[0:40]
 
 //The thickness of perimeter support material
 Auger_perimeter_thickness = 0.0; //[0:None, 0.8:Thin, 2:Thick]
@@ -60,168 +61,69 @@ Auger_flight_thickness = 3;  //[0.2:Thin, 1:Medium, 10:Thick]
 
 Auger_handedness = "right";  //["right":Right, "left":Left]
 
+/* [Build plate] */
+
+//for display only, doesn't contribute to final object
+build_plate_selector = 3; //[0:Replicator 2,1: Replicator,2:Thingomatic,3:Manual]
+//when Build Plate Selector is set to "manual" this controls the build plate x dimension
+build_plate_manual_x = 200; //[100:400]
+//when Build Plate Selector is set to "manual" this controls the build plate y dimension
+build_plate_manual_y = 200; //[100:400]
+
+build_plate(build_plate_selector,build_plate_manual_x,build_plate_manual_y);
+
 /* [Hidden] */
 
 M_PI = 3.14159;
 mm = 1;
 inch = 25.4 * mm;
 
-//*********************************************************
-//
+/*---Code by Chaoneng Quan---*/
+$fn = 200;
+tubeHeight= Auger_flight_length - 25;
 
-module tube() {
-    difference(){
-        union() {
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 180);    
-            translate([0,0,-20])
-                servo_rail();
-            translate([0,0,15])
-                servo_rail();
-            translate([0,0,50])
-                servo_rail();
-            translate([0,0,85])
-                servo_rail();
-        }
 
-        //translate([0,0,1]) // seal bottom
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 180); 
+shieldHeight = 27;  //27 touching top
+openRadius = 8;
+openHeight = 10;
 
-        /**
-         * skittle hole
-         */
-        //translate([0,20,15])
-        //    cube([40,15,20], center = true);
-        
-        /**
-         * trap door holes
-         */
-        translate([0,-20,50])
-            cube([40,15,20], center = true);
-        translate([0,-20,85])
-            cube([40,15,20], center = true);
-        translate([0,-20,120])
-            cube([40,15,20], center = true);
-        translate([0,-20,155])
-            cube([40,15,20], center = true);
-    }
-}
 
-//tube();
+/*---end of code---*/
 
-module trap_door() {
-    // section that connects to servo
+translate([0,0,3]) {
     difference() {
         union() {
-            // outter arc
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 5, h = 20, center = true);
-            //horn mount
-            translate([-29,-20,1.5])
-                cube([29,17,4]);
-            translate([-24,-3,1.5])
-                cylinder(h = 4, d = 10);
+            translate([0,0,179])rotate([180,0,0])
+            auger(
+                    r1 = Auger_shaft_radius,
+                    r2 = Auger_shaft_radius + Auger_flight_radius,
+                    h = Auger_flight_length,
+                    overhangAngle = Printer_overhang_capability,
+                    multiStart = Auger_num_flights,
+                    flightThickness = Auger_flight_thickness,
+                    turns = Auger_twist/360,
+                    pitch=0,
+                    supportThickness = Auger_perimeter_thickness,
+                    handedness=Auger_handedness,
+                    //$fn=50,
+                    $fa=12,
+                    $fs=5
+                 );
+            translate([0,0,-2])cylinder(h=3,d=5.5);
         }
-        cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 21, center = true);
-        // extra lip no non-servo side
-        translate([0,-11,-10])
-            cube([30,50,21]);
-        // long piece connection to servo
-        translate([-20,-6.5,-11.5])
-            cube([30,50,21]);
-        // servo mount cutouts - bottom
-        translate([-20,-12.5,-11.5])
-            cube([30,50,12]);
-        // servo mount cutouts - top
-        translate([-20,-12.5,5.5])
-            cube([30,50,10]);
-        // horn cutout
-        translate([-24,-3,5.5]) rotate([0,180,90]) scale([1.06,1.06,1.06])
-            servo_horn();
-    }
-
-    // section that matches holes in tube
-    intersection() {
-        difference(){
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 3, h = 18, center = true);
-            cylinder(r = Auger_flight_radius + Auger_shaft_radius + 1, h = 20, center=true);
-        }
-        translate([0,-20,0])
-            cube([40,15,20], center = true);
-    }
-}
-trap_door();
-
-/**
- * single-section horn for blue servo
- */
-module servo_horn() {
-    cylinder(h=3.8, d = 7);
-    translate([14,0,0])
-        cylinder(h=1.3, d = 4); // tip
-    linear_extrude(height = 1.4)
-        //polygon(points = [[0,3.5], [0,-3.5], [14,-2], [14,2]]);
-        polygon(points = [[2.3,2.65], [2.3,-2.65], [14,-2], [14,2]]);
-}
-//servo_horn();
-
-module servo_rail() {
-    translate([-20,2,52]){
-        difference() {
-            union() {
-                //side clips
-                cube([24,27,15], center=true);
-                // top stop
-                translate([0,7,15.5])
-                    cube([22,7,2], center=true);
+        // motor shaft hole
+        translate([0,0,-1])
+            scale([1.05,1.05,1.05]){
+                difference() {
+                    translate([0,0,-3])
+                        cylinder(h=15,d=4);
+                    translate([1.5,-2,-3])
+                        cube([4,4,15]);
+                }
             }
-            // hollow out clips
-            cube([26,23,16], center=true); 
-            // make room for wires
-            translate([0,-5,-5.5])
-                cube([26,23,6], center=true);
-        }
-        // long side snap
-        translate ([.25,0,-7.5]) linear_extrude(height=15)
-            polygon( points = [ [-12,11.5], [-11,11.5], [-11,10.5]]);
-        // short side snap
-        translate ([.25,0,-2.5]) linear_extrude(height=10)
-            polygon( points = [ [-12,-11.5], [-11,-11.5], [-11,-10.5]]);
-        // top snap
-        translate([1.25,3.5,3]) rotate([-90,0,0]) linear_extrude(height=7)
-            polygon( points = [ [-12,-11.5], [-11,-11.5], [-11,-10.5]]);
-        // flat backing
-        translate([7,0,4.25])
-            cube([10,27,23.5], center=true); 
+        translate([0,0,179.5]) cylinder(h=10,r=50);
     }
 }
-
-module clip_test() {
-    difference() {
-        servo_rail();
-        translate([-15,-20,0])
-            cube([100,100,100]);
-    }
-}
-
-//clip_test();
-
-//*********************************************************
-
-
-// auger(
-// r1 = Auger_shaft_radius,
-// r2 = Auger_shaft_radius + Auger_flight_radius,
-// h = Auger_flight_length,
-// overhangAngle = Printer_overhang_capability,
-// multiStart = Auger_num_flights,
-// flightThickness = Auger_flight_thickness,
-// turns = Auger_twist/360,
-// pitch=0,
-// supportThickness = Auger_perimeter_thickness,
-// handedness=Auger_handedness,
-// //$fn=50,
-// $fa=12,
-// $fs=5
-// );
 
 
 
