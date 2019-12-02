@@ -68,44 +68,63 @@ inch = 25.4 * mm;
 
 //*********************************************************
 
-module tube(id=38) {
+module tube(id=38, shole=true) {
     difference(){
         union() {
             cylinder(d=id+4, h = 180);    
-            //translate([0,0,-20])
-            //    servo_rail();
-            //translate([0,0,15])
-            //    servo_rail();
-            //translate([0,0,50])
-            //    servo_rail();
-            //translate([0,0,85])
-            //    servo_rail();
+
+            translate([-3,0,-20])
+                servo_rail();
+            translate([-3,0,15])
+                servo_rail();
+            translate([-3,0,50])
+                servo_rail();
+            translate([-3,0,85])
+                servo_rail();
         }
 
-        //translate([0,0,1]) // seal bottom
+        translate([0,0,1]) // seal bottom
             cylinder(d=id, h = 180); 
 
         /**
          * skittle hole
          */
-        //translate([0,20,15])
-        //    cube([40,15,20], center = true);
+        if (shole) {
+            translate([0,20,15])
+                cube([20,15,20], center = true);
+        }
         
         /**
          * trap door holes
          */
         translate([0,-20,50])
-            cube([40,15,20], center = true);
+            cube([30,15,20], center = true);
         translate([0,-20,85])
-            cube([40,15,20], center = true);
+            cube([30,15,20], center = true);
         translate([0,-20,120])
-            cube([40,15,20], center = true);
+            cube([30,15,20], center = true);
         translate([0,-20,155])
-            cube([40,15,20], center = true);
+            cube([30,15,20], center = true);
     }
 }
 
-tube();
+//tube();
+
+module test_section() {
+    difference() {
+        tube(shole=false);
+        cube([50,50,49], center=true);
+        translate([0,0,162])
+            cube([100,100,200], center=true);
+        translate([0,0,55])
+            difference() {
+                cylinder(d=38+50, h = 50);
+                cylinder(d=38+4, h = 50);      
+            }
+    }
+}
+
+test_section();
 
 module trap_door() {
     // section that connects to servo
