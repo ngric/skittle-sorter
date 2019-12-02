@@ -4,9 +4,9 @@ height = 180;
 
 include <CustomizablePrintableAuger.scad>
 
-tube();
+#tube();
 
-module tube(id=40, shole=true, height=180) {
+module tube(id=40, shole=true, height=182) {
     difference(){
         union() {
             cylinder(d=id+4, h = height);    
@@ -43,6 +43,11 @@ module tube(id=40, shole=true, height=180) {
             cube([30,15,20], center = true);
         translate([0,-20,155])
             cube([30,15,20], center = true);
+
+        /**
+         * motor shaft hole
+         */
+        cylinder(d=6,h=4.5,center=true);
     }
 }
 

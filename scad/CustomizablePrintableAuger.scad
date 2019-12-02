@@ -1,8 +1,9 @@
-$fn = 400;
 // Parametric Printable Auger
 // It is licensed under the Creative Commons - GNU GPL license.
 // � 2013 by William Gibson
 // http://www.thingiverse.com/thing:96462
+
+// 5 colors in skittle bag
 
 ////////////
 //Examples//
@@ -31,21 +32,21 @@ $fn = 400;
 /* [Auger] */
 
 //The total amount of twist, in degrees
-Auger_twist = 800; //[90:1080]
+Auger_twist = 1080; //[90:1080]
 
 //The radius of the auger's "flight" past the shaft
-Auger_flight_radius = 10; //[5:50]
+Auger_flight_radius = 14; //[5:50]                         // == diameter of a single skittle 
 
 //The number of "flights" 
-Auger_num_flights = 2; //[1:5]
+Auger_num_flights = 3; //[1:5]
 
 //The height, from top to bottom of the "shaft"
-Auger_flight_length = 125; //[10:200]
+Auger_flight_length = 180; //[10:200]                           
 
 /* [Printer] */
 
 //The overhang angle your printer is capable of
-Printer_overhang_capability = 20; //[0:40]
+Printer_overhang_capability = 30; //[0:40]
 
 //The thickness of perimeter support material
 Auger_perimeter_thickness = 0.0; //[0:None, 0.8:Thin, 2:Thick]
@@ -60,33 +61,69 @@ Auger_flight_thickness = 3;  //[0.2:Thin, 1:Medium, 10:Thick]
 
 Auger_handedness = "right";  //["right":Right, "left":Left]
 
+/* [Build plate] */
+
+//for display only, doesn't contribute to final object
+build_plate_selector = 3; //[0:Replicator 2,1: Replicator,2:Thingomatic,3:Manual]
+//when Build Plate Selector is set to "manual" this controls the build plate x dimension
+build_plate_manual_x = 200; //[100:400]
+//when Build Plate Selector is set to "manual" this controls the build plate y dimension
+build_plate_manual_y = 200; //[100:400]
+
+build_plate(build_plate_selector,build_plate_manual_x,build_plate_manual_y);
+
 /* [Hidden] */
 
 M_PI = 3.14159;
 mm = 1;
 inch = 25.4 * mm;
 
-//*********************************************************
+/*---Code by Chaoneng Quan---*/
+$fn = 200;
+tubeHeight= Auger_flight_length - 25;
 
 
-//*********************************************************
+shieldHeight = 27;  //27 touching top
+openRadius = 8;
+openHeight = 10;
 
 
-auger(
-r1 = Auger_shaft_radius,
-r2 = Auger_shaft_radius + Auger_flight_radius,
-h = Auger_flight_length,
-overhangAngle = Printer_overhang_capability,
-multiStart = Auger_num_flights,
-flightThickness = Auger_flight_thickness,
-turns = Auger_twist/360,
-pitch=0,
-supportThickness = Auger_perimeter_thickness,
-handedness=Auger_handedness,
-//$fn=50,
-$fa=12,
-$fs=5
-);
+/*---end of code---*/
+
+translate([0,0,3]) {
+    difference() {
+        union() {
+            translate([0,0,179])rotate([180,0,0])
+            auger(
+                    r1 = Auger_shaft_radius,
+                    r2 = Auger_shaft_radius + Auger_flight_radius,
+                    h = Auger_flight_length,
+                    overhangAngle = Printer_overhang_capability,
+                    multiStart = Auger_num_flights,
+                    flightThickness = Auger_flight_thickness,
+                    turns = Auger_twist/360,
+                    pitch=0,
+                    supportThickness = Auger_perimeter_thickness,
+                    handedness=Auger_handedness,
+                    //$fn=50,
+                    $fa=12,
+                    $fs=5
+                 );
+            translate([0,0,-2])cylinder(h=3,d=5.5);
+        }
+        // motor shaft hole
+        translate([0,0,-1])
+            scale([1.05,1.05,1.05]){
+                difference() {
+                    translate([0,0,-3])
+                        cylinder(h=15,d=4);
+                    translate([1.5,-2,-3])
+                        cube([4,4,15]);
+                }
+            }
+        translate([0,0,179.5]) cylinder(h=10,r=50);
+    }
+}
 
 
 
