@@ -1,6 +1,6 @@
-include <FeederBox.scad>
+//include <FeederBox.scad>
 
-feeder();
+//feeder();
 
 
 
@@ -13,7 +13,8 @@ height = 180;
 
 include <CustomizablePrintableAuger.scad>
 
-#tube();
+tube();
+
 
 module tube(id=40, shole=true, height=182) {
     difference(){
@@ -21,7 +22,7 @@ module tube(id=40, shole=true, height=182) {
             cylinder(d=id+4, h = height);    
 
             translate([-3,0,-20])
-                servo_rail();
+               servo_rail();
             translate([-3,0,15])
                 servo_rail();
             translate([-3,0,50])
