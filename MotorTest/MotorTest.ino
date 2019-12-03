@@ -36,28 +36,28 @@ void setup() {
     myMotor->setSpeed(100);
     myMotor->run(dir);
 
-    door[1].attach(servo1Pin);
-    door[2].attach(servo2Pin);
-    door[3].attach(servo3Pin);
-    door[4].attach(servo4Pin);
+    door[0].attach(servo1Pin);
+    door[1].attach(servo2Pin);
+    door[2].attach(servo3Pin);
+    door[3].attach(servo4Pin);
 
+    door[0].write(OPEN);
     door[1].write(OPEN);
     door[2].write(OPEN);
     door[3].write(OPEN);
-    door[4].write(OPEN);
 }
 
 void loop() {
     if (count < 250) {
+        door[0].write(OPEN);
         door[1].write(OPEN);
         door[2].write(OPEN);
         door[3].write(OPEN);
-        door[4].write(OPEN);
     } else if (count < 500) {
+        door[0].write(CLOSED);
         door[1].write(CLOSED);
         door[2].write(CLOSED);
         door[3].write(CLOSED);
-        door[4].write(CLOSED);
     } else {
         count = 0;
         reverse();
