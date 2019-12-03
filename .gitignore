@@ -1,2 +1,4 @@
 /gcode/
+*.elf
+*.hex
 *.swp
