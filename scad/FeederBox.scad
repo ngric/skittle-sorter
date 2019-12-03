@@ -9,12 +9,13 @@ ThicknessOfSkittle = 9;
 wallThickness = 2;
 
 
-//feeder();
+feeder();
 
 module feeder(){
     difference(){    
         box();
         cavity();
+        #rotate([0,10,0])translate([2,2,-18])cube([boxLength-4,boxWidth-4,boxHeight-4]);
     }
     cover();
 }

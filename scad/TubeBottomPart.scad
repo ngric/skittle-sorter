@@ -1,6 +1,8 @@
 // bottom part of the tube
 // contains: skittle feeder, sensor trap door, 
 
+$fn = 200;
+
 tubeBot();
 difference(){
     tubeWall();
