@@ -6,18 +6,18 @@ include <CustomizablePrintableAuger.scad>
 
 #tube();
 
-module tube(id=40, shole=true, height=180) {
+module tube(id=40, shole=true, height=165) {
     difference(){
         union() {
             cylinder(d=id+4, h = height);    
 
-            translate([-3,0,-20])
+            translate([-3,0,-25])
                 servo_rail();
-            translate([-3,0,15])
+            translate([-3,0,10])
                 servo_rail();
-            translate([-3,0,50])
+            translate([-3,0,45])
                 servo_rail();
-            translate([-3,0,85])
+            translate([-3,0,80])
                 servo_rail();
         }
 
@@ -35,13 +35,13 @@ module tube(id=40, shole=true, height=180) {
         /**
          * trap door holes
          */
-        translate([0,-20,50])
+        translate([0,-20,45])
             cube([30,15,20], center = true);
-        translate([0,-20,85])
+        translate([0,-20,80])
             cube([30,15,20], center = true);
-        translate([0,-20,120])
+        translate([0,-20,115])
             cube([30,15,20], center = true);
-        translate([0,-20,155])
+        translate([0,-20,150])
             cube([30,15,20], center = true);
     }
 }
@@ -62,6 +62,7 @@ module test_section() {
     }
 }
 
+//$fn=150;
 //trap_door(od);
 
 module trap_door(od, height = 20) {
@@ -88,13 +89,13 @@ module trap_door(od, height = 20) {
     // servo connection base
     difference() {
         union() {
-            translate([10,-18,.5])
+            translate([10,-18,3.5])
                 cube([20,30,3.8], center=true);
-            translate([.5,-28,-1.4])
+            translate([1.5,-28,1.6])
                 cylinder(h=3.8, d=10);
         }
         cylinder(d=od+4, h=height, center=true);
-        translate([1,-28,2.41]) rotate([180,0,0]) scale([1.1,1.1,1.1])
+        translate([2,-28,5.41]) rotate([180,0,0]) scale([1.1,1.1,1.1])
             servo_horn();
     }
 }

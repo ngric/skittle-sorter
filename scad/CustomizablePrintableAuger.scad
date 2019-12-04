@@ -79,7 +79,7 @@ mm = 1;
 inch = 25.4 * mm;
 
 /*---Code by Chaoneng Quan---*/
-$fn = 200;
+$fn = 300;
 tubeHeight= Auger_flight_length - 25;
 
 
@@ -90,7 +90,23 @@ openHeight = 10;
 
 /*---end of code---*/
 
-translate([0,0,height])rotate([180,0,0])difference() {
+difference() {
+    union() {
+        ourAuger();
+        rotate([0,0,2])translate([0,0,20]) ourAuger();
+    }
+    // motor shaft hole
+    scale([1.1,1.1,1.1]){
+        difference() {
+            translate([0,0,-3])
+                cylinder(h=15,d=4);
+            translate([1.5,-2,-3])
+                cube([4,4,15]);
+        }
+    }
+}
+
+module ourAuger() {
     auger(
             r1 = Auger_shaft_radius,
             r2 = Auger_shaft_radius + Auger_flight_radius,
@@ -106,18 +122,7 @@ translate([0,0,height])rotate([180,0,0])difference() {
             $fa=12,
             $fs=5
          );
-    // motor shaft hole
-    scale([1.1,1.1,1.1]){
-        difference() {
-            translate([0,0,-3])
-                cylinder(h=15,d=4);
-            translate([1.5,-2,-3])
-                cube([4,4,15]);
-        }
-    }
 }
-
-
 
 //////////////////////
 //Auger Library Code//
