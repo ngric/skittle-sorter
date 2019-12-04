@@ -63,9 +63,9 @@ float lastCosine = 0;
  */
 void initializeTrainingColors() {
   // Skittle: red
-  trainingColors[CHANNEL_R][COL_RED] = 0.837;
-  trainingColors[CHANNEL_G][COL_RED] = 0.418;
-  trainingColors[CHANNEL_B][COL_RED] = 0.354;
+  trainingColors[CHANNEL_R][COL_RED] = 0.8739;
+  trainingColors[CHANNEL_G][COL_RED] = 0.3445;
+  trainingColors[CHANNEL_B][COL_RED] = 0.3429;
 
   // Skittle: green
   trainingColors[CHANNEL_R][COL_GREEN] = 0.496;
