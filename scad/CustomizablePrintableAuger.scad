@@ -90,38 +90,30 @@ openHeight = 10;
 
 /*---end of code---*/
 
-translate([0,0,3]) {
-    difference() {
-        union() {
-            translate([0,0,179])rotate([180,0,0])
-            auger(
-                    r1 = Auger_shaft_radius,
-                    r2 = Auger_shaft_radius + Auger_flight_radius,
-                    h = Auger_flight_length,
-                    overhangAngle = Printer_overhang_capability,
-                    multiStart = Auger_num_flights,
-                    flightThickness = Auger_flight_thickness,
-                    turns = Auger_twist/360,
-                    pitch=0,
-                    supportThickness = Auger_perimeter_thickness,
-                    handedness=Auger_handedness,
-                    //$fn=50,
-                    $fa=12,
-                    $fs=5
-                 );
-            translate([0,0,-2])cylinder(h=3,d=5.5);
+translate([0,0,height])rotate([180,0,0])difference() {
+    auger(
+            r1 = Auger_shaft_radius,
+            r2 = Auger_shaft_radius + Auger_flight_radius,
+            h = Auger_flight_length,
+            overhangAngle = Printer_overhang_capability,
+            multiStart = Auger_num_flights,
+            flightThickness = Auger_flight_thickness,
+            turns = Auger_twist/360,
+            pitch=0,
+            supportThickness = Auger_perimeter_thickness,
+            handedness=Auger_handedness,
+            //$fn=50,
+            $fa=12,
+            $fs=5
+         );
+    // motor shaft hole
+    scale([1.1,1.1,1.1]){
+        difference() {
+            translate([0,0,-3])
+                cylinder(h=15,d=4);
+            translate([1.5,-2,-3])
+                cube([4,4,15]);
         }
-        // motor shaft hole
-        translate([0,0,-1])
-            scale([1.05,1.05,1.05]){
-                difference() {
-                    translate([0,0,-3])
-                        cylinder(h=15,d=4);
-                    translate([1.5,-2,-3])
-                        cube([4,4,15]);
-                }
-            }
-        translate([0,0,179.5]) cylinder(h=10,r=50);
     }
 }
 

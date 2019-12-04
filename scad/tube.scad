@@ -6,7 +6,7 @@ include <CustomizablePrintableAuger.scad>
 
 #tube();
 
-module tube(id=40, shole=true, height=182) {
+module tube(id=40, shole=true, height=180) {
     difference(){
         union() {
             cylinder(d=id+4, h = height);    
@@ -21,16 +21,16 @@ module tube(id=40, shole=true, height=182) {
                 servo_rail();
         }
 
-        translate([0,0,1]) // seal bottom
-            cylinder(d=id, h = height); 
+        translate([0,0,-1]) // seal bottom
+            cylinder(d=id, h = height+2); 
 
         /**
          * skittle hole
          */
-        if (shole) {
-            translate([0,20,11])
-                cube([20,15,20], center = true);
-        }
+        //if (shole) {
+        //    translate([0,20,11])
+        //        cube([20,15,20], center = true);
+        //}
         
         /**
          * trap door holes
@@ -43,11 +43,6 @@ module tube(id=40, shole=true, height=182) {
             cube([30,15,20], center = true);
         translate([0,-20,155])
             cube([30,15,20], center = true);
-
-        /**
-         * motor shaft hole
-         */
-        cylinder(d=6,h=4.5,center=true);
     }
 }
 
@@ -93,13 +88,13 @@ module trap_door(od, height = 20) {
     // servo connection base
     difference() {
         union() {
-            translate([10,-20,1.5])
+            translate([10,-18,.5])
                 cube([20,30,3.8], center=true);
-            translate([-.1,-30,-.4])
+            translate([.5,-28,-1.4])
                 cylinder(h=3.8, d=10);
         }
         cylinder(d=od+4, h=height, center=true);
-        translate([0,-30,3.5]) rotate([180,0,0]) scale([1.05,1.05,1.05])
+        translate([1,-28,2.41]) rotate([180,0,0]) scale([1.1,1.1,1.1])
             servo_horn();
     }
 }
