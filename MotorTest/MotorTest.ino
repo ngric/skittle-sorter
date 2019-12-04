@@ -48,26 +48,26 @@ void setup() {
 }
 
 void loop() {
-    if (count < 250) {
-        door[0].write(OPEN);
-        door[1].write(OPEN);
-        door[2].write(OPEN);
-        door[3].write(OPEN);
-    } else if (count < 500) {
-        door[0].write(CLOSED);
-        door[1].write(CLOSED);
-        door[2].write(CLOSED);
-        door[3].write(CLOSED);
-    } else {
+//    if (count < 250) {
+//        door[0].write(OPEN);
+//        door[1].write(OPEN);
+//        door[2].write(OPEN);
+//        door[3].write(OPEN);
+//    } else if (count < 500) {
+//        door[0].write(CLOSED);
+//        door[1].write(CLOSED);
+//        door[2].write(CLOSED);
+//        door[3].write(CLOSED);
+//    } else {
+//        count = 0;
+//        reverse();
+//    }
+    if (count > 250) {
         count = 0;
-        reverse();
+        //reverse();
+        nextDoor();
     }
-    //if (count > 250) {
-    //    count = 0;
-    //    reverse();
-    //    nextDoor();
-    //}
-    //Serial.println(count);
+    Serial.println(count);
 }
 
 void nextDoor() {
