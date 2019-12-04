@@ -1,6 +1,3 @@
-
-//-------------------------------------------------------
-
 id = 40;
 od = id+4;
 height = 180;
@@ -9,14 +6,13 @@ include <CustomizablePrintableAuger.scad>
 
 tube();
 
-
-module tube(id=40, shole=true, height=182) {
+module tube(id=40, shole=true, height=180) {
     difference(){
         union() {
             cylinder(d=id+4, h = height);    
 
             translate([-3,0,-20])
-               servo_rail();
+                servo_rail();
             translate([-3,0,15])
                 servo_rail();
             translate([-3,0,50])
@@ -25,16 +21,16 @@ module tube(id=40, shole=true, height=182) {
                 servo_rail();
         }
 
-        translate([0,0,1]) // seal bottom
-            cylinder(d=id, h = height); 
+        translate([0,0,-1]) // seal bottom
+            cylinder(d=id, h = height+2); 
 
         /**
          * skittle hole
          */
-        if (shole) {
-            translate([0,20,11])
-                cube([20,15,20], center = true);
-        }
+        //if (shole) {
+        //    translate([0,20,11])
+        //        cube([20,15,20], center = true);
+        //}
         
         /**
          * trap door holes
@@ -47,11 +43,6 @@ module tube(id=40, shole=true, height=182) {
             cube([30,15,20], center = true);
         translate([0,-20,155])
             cube([30,15,20], center = true);
-
-        /**
-         * motor shaft hole
-         */
-        cylinder(d=6,h=4.5,center=true);
     }
 }
 
@@ -97,13 +88,13 @@ module trap_door(od, height = 20) {
     // servo connection base
     difference() {
         union() {
-            translate([10,-20,1.5])
+            translate([10,-18,.5])
                 cube([20,30,3.8], center=true);
-            translate([-.1,-30,-.4])
+            translate([.5,-28,-1.4])
                 cylinder(h=3.8, d=10);
         }
         cylinder(d=od+4, h=height, center=true);
-        translate([0,-30,3.5]) rotate([180,0,0]) scale([1.05,1.05,1.05])
+        translate([1,-28,2.41]) rotate([180,0,0]) scale([1.1,1.1,1.1])
             servo_horn();
     }
 }
@@ -162,3 +153,59 @@ module clip_test() {
 }
 
 //clip_test();
+
+//---
+translate([0,0,-50])bot();
+module bot(){
+// bottom part of the tube
+// contains: skittle feeder, sensor trap door, 
+
+$fn = 200;
+
+difference(){
+    tubeBot();
+    rotate([0,0,180])translate([-((sensorLength+1)/2),19.75,22])cube([sensorLength+1,sesnorThickness,sensorLength+1]);
+}
+rotate([0,0,180])latch();
+tubeConnector();
+
+tubeHeight = 50;
+tubeDiamete = 40;
+//sensor dimension
+sensorLength = 21;
+sesnorThickness = 3;
+
+module tubeBot(){
+    difference(){
+        tubeCylinder();
+        tubeCavity();
+        cylinder(d=6,h=4.5,center=true); // motor hole
+        translate([0,0,10])rotate([90,0,180])cylinder(d=15,h=30); //skittle sorter hole
+    }
+}
+
+
+module latch(){
+    translate([0,23,46])cube([5,5,2],true);
+    translate([0,23.5,44])cube([5,2,6],true);
+    translate([0,23,20])cube([5,5,2],true);
+    translate([0,23.5,22])cube([5,2,6],true);
+}
+
+module tubeCylinder(){
+    cylinder(d=tubeDiamete+4, h = tubeHeight); //tube cylinder
+}
+module tubeCavity(){
+      translate([0,0,2]) cylinder(d=tubeDiamete, h = tubeHeight); //tube cavity 
+}
+
+
+module tubeConnector(){
+    translate([0,0,tubeHeight-5])difference(){
+        cylinder(d=48,h=15);
+        translate([0,0,1])cylinder(d=45,h=15);
+        translate([0,0,-1])cylinder(d=41,h=3);
+    }
+    
+}
+}
