@@ -1,16 +1,19 @@
 // bottom part of the tube
 // contains: skittle feeder, sensor trap door, 
 
-$fn = 200;
+$fn = 150;
+
+screwDiameter = 3;
+
 
 difference(){
     tubeBot();
-    rotate([0,0,180])translate([-((sensorLength+1)/2),19.75,22])cube([sensorLength+1,sesnorThickness,sensorLength+1]);
+    translate([0,0,14.5])rotate([0,0,180])translate([-((sensorLength+1)/2),19.8,22])cube([sensorLength+1,sesnorThickness,sensorLength+1.5]); //sensor hole
 }
-rotate([0,0,180])latch();
+translate([0,0,15])rotate([0,0,180])latch();
 tubeConnector();
 
-tubeHeight = 50;
+tubeHeight = 65;
 tubeDiamete = 40;
 //sensor dimension
 sensorLength = 21;
@@ -21,16 +24,17 @@ module tubeBot(){
         tubeCylinder();
         tubeCavity();
         cylinder(d=6,h=4.5,center=true); // motor hole
-        translate([0,0,10])rotate([90,0,180])cylinder(d=15,h=30); //skittle sorter hole
+        translate([0,0,11])rotate([90,0,180])cylinder(d=17,h=30); //skittle sorter hole d= 17mm
     }
 }
 
 
 module latch(){
-    translate([0,23,46])cube([5,5,2],true);
-    translate([0,23.5,44])cube([5,2,6],true);
-    translate([0,23,20])cube([5,5,2],true);
-    translate([0,23.5,22])cube([5,2,6],true);
+    translate([-sensorLength/2,25.2,44])rotate([90,0,0])cube([sensorLength+2,2,5]);//top horizontal bar
+    translate([-sensorLength/2+3,23.2,19.5])cube([sensorLength-2,2,26.5]);//middle pane
+    translate([-sensorLength/2,25.2,19.5])rotate([90,0,0])cube([sensorLength+2,2,5]);//bot horizontal bar
+    translate([11.5,16.7,19.5])cube([2,8.5,sensorLength+5.5]);//top 
+    translate([8,18.5,19.5])cube([4,3,2]);//patch
 }
 
 module tubeCylinder(){
@@ -42,10 +46,16 @@ module tubeCavity(){
 
 
 module tubeConnector(){
-    translate([0,0,tubeHeight-5])difference(){
-        cylinder(d=48,h=15);
-        translate([0,0,1])cylinder(d=45,h=15);
-        translate([0,0,-1])cylinder(d=41,h=3);
-    }
+    //extend cover length = 10
     
+    difference(){
+        translate([0,0,tubeHeight-6])difference(){
+            cylinder(d=48,h=16);
+            translate([0,0,1])cylinder(d=45,h=16);
+            translate([0,0,-1])cylinder(d=41,h=3);
+        }
+        translate([0,0,tubeHeight+5])rotate([90,0,0])cylinder(d=3,h=50,center = true);//screw hole
+        rotate([0,0,90])translate([0,0,tubeHeight+5])rotate([90,0,0])cylinder(d=3,h=50,center = true);//screw hole  
+    }
+   
 }
