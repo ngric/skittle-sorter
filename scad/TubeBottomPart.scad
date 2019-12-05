@@ -25,7 +25,8 @@ module tubeBot(){
         tubeCavity();
         cylinder(d=6,h=4.5,center=true); // motor hole
         translate([0,0,11])rotate([90,0,180])cylinder(d=17,h=30); //skittle sorter hole d= 17mm
-    }
+    } 
+    //translate([0,22,11])cube(1,true);
 }
 
 
@@ -51,8 +52,8 @@ module tubeConnector(){
     difference(){
         translate([0,0,tubeHeight-6])difference(){
             cylinder(d=48,h=16);
-            translate([0,0,1])cylinder(d=45,h=16);
-            translate([0,0,-1])cylinder(d=41,h=3);
+            translate([0,0,1])cylinder(d=44.5,h=16);
+            translate([0,0,-1])cylinder(d=40,h=3);
         }
         translate([0,0,tubeHeight+5])rotate([90,0,0])cylinder(d=3,h=50,center = true);//screw hole
         rotate([0,0,90])translate([0,0,tubeHeight+5])rotate([90,0,0])cylinder(d=3,h=50,center = true);//screw hole  

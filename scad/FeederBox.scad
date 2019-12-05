@@ -21,7 +21,7 @@ module feeder(){
 }
 
 //box dimension
-boxLength = 180;
+boxLength = 170;
 boxWidth = 50;
 boxHeight = 50;
 module box(){
@@ -32,7 +32,7 @@ module box(){
 topDiameter = boxWidth;
 botDiameter = boxWidth*4/5;
 //hole dimension
-holeDiameter = DiameterOfSkittle + 2;
+holeDiameter = 17;
 
 module cavity(){
     //cylinder
@@ -44,5 +44,5 @@ module cavity(){
 }
 
 module cover(){
-   translate([175,0,0])cube([5,boxWidth,boxHeight]);
+   translate([165,0,0])cube([5,boxWidth,boxHeight]);
 }
