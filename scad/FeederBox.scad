@@ -1,6 +1,6 @@
 //Box Feeder
 
-$fn = 10;
+$fn = 5;
 //Skittle dimensions
 DiameterOfSkittle = 13;
 ThicknessOfSkittle = 9;
