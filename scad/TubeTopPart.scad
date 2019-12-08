@@ -28,6 +28,16 @@ module tubeTopPart(id=40, shole=true, height=180) {
                 servo_rail();
             translate([-3,0,85])
                 servo_rail();
+
+            translate([0,0,50])
+                door_guide();
+            translate([0,0,85])
+                door_guide();
+            translate([0,0,120])
+                door_guide();
+            translate([0,0,155])
+                door_guide();
+                
         }
         translate([0,0,-1]) // seal bottom
             cylinder(d=id, h = height+2); 
@@ -43,6 +53,41 @@ module tubeTopPart(id=40, shole=true, height=180) {
             cube([30,15,20], center = true);
         translate([0,-20,155])
             cube([30,15,20], center = true);
+    }
+}
+
+module tube_test(id = 40, shole=true, height=180) {
+    difference(){
+        union() {
+            cylinder(d=id+4, h = height-115);    
+
+            translate([-3,0,-20])
+                servo_rail();
+
+            translate([0,0,50])
+                door_guide();
+                
+        }
+        translate([0,0,-1]) // seal bottom
+            cylinder(d=id, h = height+2); 
+        
+        /**
+         * trap door holes
+         */
+        translate([0,-20,50])
+            cube([30,15,20], center = true);
+
+        cube([500,500,45], center=true);
+    }
+}
+
+module door_guide() {
+    intersection() {
+        difference() {
+            cylinder(d=80,h=25, center=true);
+            cylinder(d=90,h=21, center=true);
+        }
+        rotate([0,0,-30])translate([0,-45,0])cube([10,50,40],center=true);
     }
 }
 

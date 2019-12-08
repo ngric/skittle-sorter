@@ -23,7 +23,7 @@ volatile int count = 0;
 uint8_t dir = FORWARD;
 
 // Servo
-const int OPEN = 70;
+const int OPEN = 60;
 const int CLOSED = 100;
 int curOpen = 1;
 
@@ -280,11 +280,11 @@ void loop(void) {
   Serial.println("");
 
   delay(100);
-//    if (count < 250) {
-//        door[0].write(OPEN);
-//        door[1].write(OPEN);
-//        door[2].write(OPEN);
-//        door[3].write(OPEN);
+    if (count < 250) {
+        door[0].write(OPEN);
+        door[1].write(OPEN);
+        door[2].write(OPEN);
+        door[3].write(OPEN);
 //    } else if (count < 500) {
 //        door[0].write(CLOSED);
 //        door[1].write(CLOSED);
@@ -294,10 +294,10 @@ void loop(void) {
 //        count = 0;
 //        reverse();
 //    }
-    if (count > 250) {
-        count = 0;
-        //reverse();
-        nextDoor();
+//    if (count > 250) {
+//        count = 0;
+//        //reverse();
+//        nextDoor();
     }
 }
 
