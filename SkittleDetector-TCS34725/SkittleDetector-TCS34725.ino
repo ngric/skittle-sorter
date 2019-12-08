@@ -1,5 +1,31 @@
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
+#include <Adafruit_MotorShield.h>
+#include "utility/Adafruit_MS_PWMServoDriver.h"
+#include <Servo.h>
+
+// Pins
+const int encoderPin = 2;
+const int servo1Pin = 4;
+const int servo2Pin = 5;
+const int servo3Pin = 6;
+const int servo4Pin = 7;
+
+// Trap-door servos
+Servo door[4];
+
+// Motor Shield
+Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
+Adafruit_DCMotor *myMotor = AFMS.getMotor(1);
+
+// Global
+volatile int count = 0;
+uint8_t dir = FORWARD;
+
+// Servo
+const int OPEN = 0;
+const int CLOSED = 100;
+int curOpen = 1;
 
 // Example code for the Adafruit TCS34725 breakout library applied to Skittle colour classification.
 // This example uses RGB vectors for classification.  It also converts the RGB vector to a HSB colourspace, 
@@ -63,34 +89,34 @@ float lastCosine = 0;
  */
 void initializeTrainingColors() {
   // Skittle: red
-  trainingColors[CHANNEL_R][COL_RED] = 0.8739;
-  trainingColors[CHANNEL_G][COL_RED] = 0.3445;
-  trainingColors[CHANNEL_B][COL_RED] = 0.3429;
+  trainingColors[CHANNEL_R][COL_RED] = 0.900;
+  trainingColors[CHANNEL_G][COL_RED] = 0.309;
+  trainingColors[CHANNEL_B][COL_RED] = 0.304;
 
   // Skittle: green
-  trainingColors[CHANNEL_R][COL_GREEN] = 0.496;
-  trainingColors[CHANNEL_G][COL_GREEN] = 0.790;
-  trainingColors[CHANNEL_B][COL_GREEN] = 0.361;
+  trainingColors[CHANNEL_R][COL_GREEN] = 0.488;
+  trainingColors[CHANNEL_G][COL_GREEN] = 0.825;
+  trainingColors[CHANNEL_B][COL_GREEN] = 0.282;
 
   // Skittle: orange
-  trainingColors[CHANNEL_R][COL_ORANGE] = 0.820;
-  trainingColors[CHANNEL_G][COL_ORANGE] = 0.454;
-  trainingColors[CHANNEL_B][COL_ORANGE] = 0.349;
+  trainingColors[CHANNEL_R][COL_ORANGE] = 0.964;
+  trainingColors[CHANNEL_G][COL_ORANGE] = 0.213;
+  trainingColors[CHANNEL_B][COL_ORANGE] = 0.153;
 
   // Skittle: yellow
-  trainingColors[CHANNEL_R][COL_YELLOW] = 0.715;
+  trainingColors[CHANNEL_R][COL_YELLOW] = 0.748;
   trainingColors[CHANNEL_G][COL_YELLOW] = 0.615;
-  trainingColors[CHANNEL_B][COL_YELLOW] = 0.333;
+  trainingColors[CHANNEL_B][COL_YELLOW] = 0.247;
 
   // Skittle: purple
-  trainingColors[CHANNEL_R][COL_PURPLE] = 0.601;
-  trainingColors[CHANNEL_G][COL_PURPLE] = 0.601;
-  trainingColors[CHANNEL_B][COL_PURPLE] = 0.526;
+  trainingColors[CHANNEL_R][COL_PURPLE] = 0.747;
+  trainingColors[CHANNEL_G][COL_PURPLE] = 0.499;
+  trainingColors[CHANNEL_B][COL_PURPLE] = 0.438;
 
   // Nothing
-  trainingColors[CHANNEL_R][COL_NOTHING] = 0.577;
-  trainingColors[CHANNEL_G][COL_NOTHING] = 0.577;
-  trainingColors[CHANNEL_B][COL_NOTHING] = 0.577;
+  trainingColors[CHANNEL_R][COL_NOTHING] = 0.458;
+  trainingColors[CHANNEL_G][COL_NOTHING] = 0.636;
+  trainingColors[CHANNEL_B][COL_NOTHING] = 0.619;
 }
 
 
@@ -215,25 +241,78 @@ void setup(void) {
   }
   
   // Now we're ready to get readings!
+
+
+    pinMode(encoderPin, INPUT);
+    attachInterrupt(digitalPinToInterrupt(encoderPin), encoderStep, FALLING);
+
+    AFMS.begin();
+    myMotor->setSpeed(100);
+    myMotor->run(dir);
+
+    door[0].attach(servo1Pin);
+    door[1].attach(servo2Pin);
+    door[2].attach(servo3Pin);
+    door[3].attach(servo4Pin);
+
+    door[0].write(OPEN);
+    door[1].write(OPEN);
+    door[2].write(OPEN);
+    door[3].write(OPEN);
 }
 
 void loop(void) {
 
-  // Step 1: Get normalized colour vector
-  getNormalizedColor();
-  int colClass = getColorClass();   
 
-  // Step 2: Output colour
-  Serial.print("R: "); Serial.print(rNorm, 3); Serial.print("  ");
-  Serial.print("G: "); Serial.print(gNorm, 3); Serial.print("  ");
-  Serial.print("B: "); Serial.print(bNorm, 3); Serial.print("  ");  
-  Serial.print("H: "); Serial.print(hue, 3); Serial.print("  ");
-  Serial.print("S: "); Serial.print(saturation, 3); Serial.print("  ");
-  Serial.print("B: "); Serial.print(brightness, 3); Serial.print("  ");
-  
-  printColourName(colClass);  
-  Serial.print(" (cos: "); Serial.print(lastCosine); Serial.print(") ");
-  Serial.println("");
+//  // Step 1: Get normalized colour vector
+//  getNormalizedColor();
+//  int colClass = getColorClass();   
+//
+//  // Step 2: Output colour
+//  Serial.print("R: "); Serial.print(rNorm, 3); Serial.print("  ");
+//  Serial.print("G: "); Serial.print(gNorm, 3); Serial.print("  ");
+//  Serial.print("B: "); Serial.print(bNorm, 3); Serial.print("  ");  
+//  Serial.print("H: "); Serial.print(hue, 3); Serial.print("  ");
+//  Serial.print("S: "); Serial.print(saturation, 3); Serial.print("  ");
+//  Serial.print("B: "); Serial.print(brightness, 3); Serial.print("  ");
+//  
+//  printColourName(colClass);  
+//  Serial.print(" (cos: "); Serial.print(lastCosine); Serial.print(") ");
+//  Serial.println("");
+//
+//  delay(100);
+//    if (count < 250) {
+        door[0].write(OPEN);
+//        door[1].write(OPEN);
+//        door[2].write(OPEN);
+//        door[3].write(OPEN);
+////    } else if (count < 500) {
+////        door[0].write(CLOSED);
+////        door[1].write(CLOSED);
+////        door[2].write(CLOSED);
+////        door[3].write(CLOSED);
+////    } else {
+////        count = 0;
+////        reverse();
+//   }
+//    if (count > 250) {
+//        count = 0;
+////        //reverse();
+//        nextDoor();
+//    }
+//}
+//
+//void nextDoor() {
+//    //Serial.print("Closing ");
+//    //Serial.println(curOpen);
+//    door[curOpen].write(CLOSED);
+//
+//    curOpen = (curOpen + 1) % 4;
+//    //Serial.print("Opening ");
+//    //Serial.println(curOpen);
+//    door[curOpen].write(OPEN);
+}
 
-  delay(1000);
+void encoderStep() {
+    count++;
 }

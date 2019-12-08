@@ -21,7 +21,7 @@ module feeder(){
 }
 
 //box dimension
-boxLength = 170;
+boxLength = 160;
 boxWidth = 50;
 boxHeight = 50;
 module box(){
@@ -44,5 +44,5 @@ module cavity(){
 }
 
 module cover(){
-   translate([165,0,0])cube([5,boxWidth,boxHeight]);
+   translate([155,0,0])cube([5,boxWidth,boxHeight]);
 }

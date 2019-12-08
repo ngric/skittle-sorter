@@ -1,19 +1,19 @@
 // Box Feeder Version 2
-$fn=150;
 
 BoxL = 180;
 BoxW = 44;
 BoxH = 40;
 WallThickness = 2;
 
-translate([0,0,40])BoxFeeder();
+translate([0,0,0])BoxFeeder();
 
 module BoxFeeder(){
     difference(){
         box();
-        translate([WallThickness,WallThickness,WallThickness])boxCavity();
-        translate([0,0,-1])skittleHole();
+        boxCavity();
+        skittleHole();
     }
+    patch();
     
 }
 
@@ -22,22 +22,36 @@ module box(){
 }
 
 module boxCavity(){
-    cube([BoxL-WallThickness*2,BoxW-WallThickness*2,BoxH]);
+    translate([WallThickness,WallThickness,BoxH-25])cube([BoxL-WallThickness*2,BoxW-WallThickness*2,BoxH]);
+    rotate([0,-5,0])translate([0,BoxW/2,BoxH-20])rotate([0,90,0])cylinder(d1=BoxW-WallThickness*2,d2=BoxW-WallThickness*2,h=BoxL,$fn=6);
 }
 
 
 module skittleHole(){
     holeCenterHeight = 11;    
-    translate([holeCenterHeight,BoxW/2,0])cylinder(d=17,h=5);
+    translate([0,0,-1])translate([holeCenterHeight,BoxW/2,-4])cylinder(d=17,h=BoxH+6); 
+}
+
+module patch(){
+    cube([WallThickness,BoxW,BoxH]);
     
 }
 
 //---------------------------------code for the entire Tube-----------------------------------//
 
+/*experiement 1
 difference(){
-    translate([0,0,-23])cube([220,44,23]);
-    translate([54.5,22,-24])rotate([0,90,0])rotate([0,0,90])entireTube();
+    translate([0,0,-6.5])cube([220,44,6.5]);
+    #translate([54.5,22,-22.5])rotate([0,90,0])rotate([0,0,90])entireTube();
+    translate([-1,22,-22.5])rotate([0,90,0])cylinder(d=44,h=230);
+    translate([57,22,-22.5])rotate([0,90,0])rotate([0,0,90])translate([0,0,2])cylinder(d=45,h=16);
+    skittleHole();
+    translate([180,-1,-20])cube([45,46,40]);
 }
+*/
+
+
+//translate([54.5,22,-22.5])rotate([0,90,0])rotate([0,0,90])entireTube();
 
 
 module entireTube(){
