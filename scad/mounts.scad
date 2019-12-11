@@ -1,8 +1,8 @@
 use <MCAD/regular_shapes.scad>
 $fn=300;
 
-//motor_end();
-open_end(true);
+motor_end();
+//open_end(true);
 
 // tube connection point
 module ring() {
@@ -16,8 +16,10 @@ module ring() {
 module motor_end() {
     difference() {
         open_end();
+        //translate([-20,-30,0])
+        //#cube([40,20,12]);
         rotate([0,90,90]) translate([0,0,-30])
-            #cylinder(d=15, h=20);
+            #cylinder(d=20, h=20);
     }
     difference() {
         translate([20,-13,12])
