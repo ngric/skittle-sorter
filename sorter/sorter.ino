@@ -10,6 +10,7 @@ const int servo1Pin = 4;
 const int servo2Pin = 5;
 const int servo3Pin = 6;
 const int servo4Pin = 7;
+const int vibrationPin = 9;
 
 // Trap-door servos
 Servo door[4];
@@ -20,12 +21,12 @@ Adafruit_DCMotor *myMotor = AFMS.getMotor(1);
 
 // Global
 volatile int count = 0;
-uint8_t dir = FORWARD;
+int lastCount = -1;
+unsigned long queue = 0UL;
 
 // Servo
 const int OPEN = 60;
 const int CLOSED = 100;
-int curOpen = 1;
 
 // Example code for the Adafruit TCS34725 breakout library applied to Skittle colour classification.
 // This example uses RGB vectors for classification.  It also converts the RGB vector to a HSB colourspace, 
@@ -89,34 +90,34 @@ float lastCosine = 0;
  */
 void initializeTrainingColors() {
   // Skittle: red
-  trainingColors[CHANNEL_R][COL_RED] = 0.900;
-  trainingColors[CHANNEL_G][COL_RED] = 0.309;
-  trainingColors[CHANNEL_B][COL_RED] = 0.304;
+  trainingColors[CHANNEL_R][COL_RED] = 0.8969;
+  trainingColors[CHANNEL_G][COL_RED] = 0.3167;
+  trainingColors[CHANNEL_B][COL_RED] = 0.3088;
 
   // Skittle: green
-  trainingColors[CHANNEL_R][COL_GREEN] = 0.488;
-  trainingColors[CHANNEL_G][COL_GREEN] = 0.825;
-  trainingColors[CHANNEL_B][COL_GREEN] = 0.282;
+  trainingColors[CHANNEL_R][COL_GREEN] = 0.5052;
+  trainingColors[CHANNEL_G][COL_GREEN] = 0.7924;
+  trainingColors[CHANNEL_B][COL_GREEN] = 0.3418;
 
   // Skittle: orange
-  trainingColors[CHANNEL_R][COL_ORANGE] = 0.964;
-  trainingColors[CHANNEL_G][COL_ORANGE] = 0.213;
-  trainingColors[CHANNEL_B][COL_ORANGE] = 0.153;
+  trainingColors[CHANNEL_R][COL_ORANGE] = 0.9155;
+  trainingColors[CHANNEL_G][COL_ORANGE] = 0.3359;
+  trainingColors[CHANNEL_B][COL_ORANGE] = 0.2213;
 
   // Skittle: yellow
-  trainingColors[CHANNEL_R][COL_YELLOW] = 0.748;
-  trainingColors[CHANNEL_G][COL_YELLOW] = 0.615;
-  trainingColors[CHANNEL_B][COL_YELLOW] = 0.247;
+  trainingColors[CHANNEL_R][COL_YELLOW] = 0.7617;
+  trainingColors[CHANNEL_G][COL_YELLOW] = 0.5979;
+  trainingColors[CHANNEL_B][COL_YELLOW] = 0.2497;
 
   // Skittle: purple
-  trainingColors[CHANNEL_R][COL_PURPLE] = 0.747;
-  trainingColors[CHANNEL_G][COL_PURPLE] = 0.499;
-  trainingColors[CHANNEL_B][COL_PURPLE] = 0.438;
+  trainingColors[CHANNEL_R][COL_PURPLE] = 0.8586;
+  trainingColors[CHANNEL_G][COL_PURPLE] = 0.3487;
+  trainingColors[CHANNEL_B][COL_PURPLE] = 0.3758;
 
   // Nothing
-  trainingColors[CHANNEL_R][COL_NOTHING] = 0.458;
-  trainingColors[CHANNEL_G][COL_NOTHING] = 0.636;
-  trainingColors[CHANNEL_B][COL_NOTHING] = 0.619;
+  trainingColors[CHANNEL_R][COL_NOTHING] = 0.6729;
+  trainingColors[CHANNEL_G][COL_NOTHING] = 0.5633;
+  trainingColors[CHANNEL_B][COL_NOTHING] = 0.4794;
 }
 
 
@@ -130,9 +131,6 @@ void getNormalizedColor() {
   rNorm = (float)r/lenVec;
   gNorm = (float)g/lenVec;
   bNorm = (float)b/lenVec;
-
-  // Also convert to HSB:
-  RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);
 }
 
 
@@ -146,7 +144,7 @@ int getColorClass() {
     distances[i] = cosineSimilarity;
 
     // DEBUG: Output cosines
-    Serial.print("   C"); Serial.print(i); Serial.print(": "); Serial.println(cosineSimilarity, 3);
+    //Serial.print("   C"); Serial.print(i); Serial.print(": "); Serial.println(cosineSimilarity, 3);
   }
 
   // Step 2: Find the vector with the highest cosine (meaning, the closest to the training color)
@@ -194,36 +192,6 @@ void printColourName(int colIdx) {
 }
 
 /*
- * Colour converstion
- */
-
-// RGB to HSV.  From https://www.cs.rit.edu/~ncs/color/t_convert.html . 
-void RGBtoHSV( float r, float g, float b, float *h, float *s, float *v ) {  
-  float minVal = min(min(r, g), b);
-  float maxVal = max(max(r, g), b);
-  *v = maxVal;       // v
-  float delta = maxVal - minVal;
-  if( maxVal != 0 )
-    *s = delta / maxVal;   // s
-  else {
-    // r = g = b = 0    // s = 0, v is undefined
-    *s = 0;
-    *h = -1;
-    return;
-  }
-  if( r == maxVal )
-    *h = ( g - b ) / delta;   // between yellow & magenta
-  else if( g == maxVal )
-    *h = 2 + ( b - r ) / delta; // between cyan & yellow
-  else
-    *h = 4 + ( r - g ) / delta; // between magenta & cyan
-  *h *= 60;       // degrees
-  if( *h < 0 )
-    *h += 360;
-}
-
-
-/*
  * Main Arduino functions
  */
  
@@ -242,18 +210,20 @@ void setup(void) {
   
   // Now we're ready to get readings!
 
-
     pinMode(encoderPin, INPUT);
     attachInterrupt(digitalPinToInterrupt(encoderPin), encoderStep, FALLING);
 
     AFMS.begin();
-    myMotor->setSpeed(100);
-    myMotor->run(dir);
+    myMotor->setSpeed(60);
+    myMotor->run(FORWARD);
 
     door[0].attach(servo1Pin);
     door[1].attach(servo2Pin);
     door[2].attach(servo3Pin);
     door[3].attach(servo4Pin);
+
+    pinMode(vibrationPin, OUTPUT);
+    analogWrite(vibrationPin, 255);
 
     door[0].write(OPEN);
     door[1].write(OPEN);
@@ -262,54 +232,71 @@ void setup(void) {
 }
 
 void loop(void) {
+    // Step 1: Get normalized colour vector
+    getNormalizedColor();
+    int colClass = getColorClass();   
 
-  // Step 1: Get normalized colour vector
-  getNormalizedColor();
-  int colClass = getColorClass();   
+    #ifdef DEBUG
+    // Step 2: Output colour
+    Serial.print("R: "); Serial.print(rNorm, 3); Serial.print("  ");
+    Serial.print("G: "); Serial.print(gNorm, 3); Serial.print("  ");
+    Serial.print("B: "); Serial.print(bNorm, 3); Serial.print("  ");  
+     
+    printColourName(colClass);  
+    Serial.print(" (cos: "); Serial.print(lastCosine); Serial.print(") ");
+    Serial.println("");
+    delay(1000);
+    #endif
 
-  // Step 2: Output colour
-  Serial.print("R: "); Serial.print(rNorm, 3); Serial.print("  ");
-  Serial.print("G: "); Serial.print(gNorm, 3); Serial.print("  ");
-  Serial.print("B: "); Serial.print(bNorm, 3); Serial.print("  ");  
-  Serial.print("H: "); Serial.print(hue, 3); Serial.print("  ");
-  Serial.print("S: "); Serial.print(saturation, 3); Serial.print("  ");
-  Serial.print("B: "); Serial.print(brightness, 3); Serial.print("  ");
-  
-  printColourName(colClass);  
-  Serial.print(" (cos: "); Serial.print(lastCosine); Serial.print(") ");
-  Serial.println("");
+    enqueue(colClass);
 
-  delay(100);
-    if (count < 250) {
-        door[0].write(OPEN);
-        door[1].write(OPEN);
-        door[2].write(OPEN);
-        door[3].write(OPEN);
-//    } else if (count < 500) {
-//        door[0].write(CLOSED);
-//        door[1].write(CLOSED);
-//        door[2].write(CLOSED);
-//        door[3].write(CLOSED);
-//    } else {
-//        count = 0;
-//        reverse();
-//    }
-//    if (count > 250) {
-//        count = 0;
-//        //reverse();
-//        nextDoor();
+    if (count == lastCount) {
+        Serial.print("Last: "); Serial.print(lastCount); Serial.print("Count: "); Serial.println(count); 
+        unjam();
+    } else {
+        lastCount = count;
+    }
+
+    if ( count > 125) {
+      count = 0;
+      queue = (queue >> 4) & 0x7FFFF;
+      Serial.print("Queue: "); Serial.println(queue, BIN);
+      readQueue();
     }
 }
 
-void nextDoor() {
-    //Serial.print("Closing ");
-    //Serial.println(curOpen);
-    door[curOpen].write(CLOSED);
+void unjam() {
+    int tmp = count;
+    myMotor->run(BACKWARD);
+    delay(50);
+    myMotor->run(FORWARD);
+    delay(50);
+    noInterrupts();
+    count = tmp;
+    lastCount = count -1;
+    interrupts();
+}
 
-    curOpen = (curOpen + 1) % 4;
-    //Serial.print("Opening ");
-    //Serial.println(curOpen);
-    door[curOpen].write(OPEN);
+void enqueue(int colClass) {
+    if (colClass == 0) {
+        bitSet(queue, 8);
+    } else if (colClass == 1) {
+        bitSet(queue, 13);
+    } else if (colClass == 2) {
+        bitSet(queue, 18);
+    } else if (colClass == 3) {
+        bitSet(queue, 23);
+    }
+}
+
+void readQueue(){
+    for (int i = 0; i < 4; i++) {
+        if (bitRead(queue, i)) {
+            door[i].write(OPEN);
+        } else {
+            door[i].write(CLOSED);
+        }
+    }
 }
 
 void encoderStep() {
