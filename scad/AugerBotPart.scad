@@ -105,8 +105,8 @@ translate([0,0,3]) {
             translate([0,0,-2])cylinder(h=3,d=5.5);
         }
         // motor shaft hole
-        translate([0,0,-71])
-            scale([1.05,1.05,1.05]){
+        #translate([0,0,-71])
+            scale([1.1,1.1,1.1]){
                 difference() {
                     translate([0,0,-3])
                         cylinder(h=15,d=4);
@@ -122,10 +122,10 @@ translate([0,0,3]) {
     translate([0,0,54]){
         cylinder(d=5,h=50);
         //4 cubes
-        translate([2,0,4])cube([3.75,1.75,9.5],true);
-        rotate([0,0,90])translate([2,0,4])cube([3.75,1.75,9.5],true);
-        rotate([0,0,180])translate([2,0,4])cube([3.75,1.75,9.5],true);
-        rotate([0,0,270])translate([2,0,4])cube([3.75,1.75,9.5],true);
+        //translate([2,0,4])cube([3.75,1.75,9.5],true);
+        //rotate([0,0,90])translate([2,0,4])cube([3.75,1.75,9.5],true);
+        //rotate([0,0,180])translate([2,0,4])cube([3.75,1.75,9.5],true);
+        //rotate([0,0,270])translate([2,0,4])cube([3.75,1.75,9.5],true);
     }
 }
 

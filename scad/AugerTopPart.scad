@@ -116,18 +116,20 @@ translate([0,0,3]) {
         translate([0,0,179.5]) cylinder(h=10,r=50);
         //Cut the tube in half due to the limit of printer's dimension
             translate([0,0,-72])cylinder(d=40,h=126);
-            translate([0,0,53]) cylinder(d=5.5,h=52);
+            translate([0,0,53]) cylinder(d=5.75,h=52);
         translate([0,0,54]){
         //4 cubes
-        translate([2,0,4])cube([4,2,10],true);
-        rotate([0,0,90])translate([2,0,4])cube([4,2,10],true);
-        rotate([0,0,180])translate([2,0,4])cube([4,2,10],true);
-        rotate([0,0,270])translate([2,0,4])cube([4,2,10],true);
+        //translate([2,0,4])cube([4,2,10],true);
+        //rotate([0,0,90])translate([2,0,4])cube([4,2,10],true);
+        //rotate([0,0,180])translate([2,0,4])cube([4,2,10],true);
+        //rotate([0,0,270])translate([2,0,4])cube([4,2,10],true);
         }
+        
+        translate([0,0,179-16]) cylinder(d=44,h=16+1); // cut off 16mm
     }
     
-    
 }
+
 
 
 
@@ -181,6 +183,8 @@ handedness="right" /*"left"*/)
 			}
 		}
 	}
+    
+
 	
 }
 
