@@ -1,3 +1,4 @@
+
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 #include <Adafruit_MotorShield.h>
@@ -23,6 +24,7 @@ Adafruit_DCMotor *myMotor = AFMS.getMotor(1);
 volatile int count = 0;
 int lastCount = -1;
 unsigned long queue = 0UL;
+const int CHANGE_DELAY = 100 ;
 
 // Servo
 const int OPEN = 60;
@@ -41,7 +43,7 @@ const int CLOSED = 100;
    
 // Initialise TCS24725 with specific int time and gain values 
 // Note: 2-4 millisecond integration (sampling) times mean we can sample at about 250-500Hz
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_2_4MS, TCS34725_GAIN_1X);
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_24MS, TCS34725_GAIN_1X);
 
 /*
  * Global colour sensing variables
@@ -90,24 +92,24 @@ float lastCosine = 0;
  */
 void initializeTrainingColors() {
   // Skittle: red
-  trainingColors[CHANNEL_R][COL_RED] = 0.8969;
-  trainingColors[CHANNEL_G][COL_RED] = 0.3167;
-  trainingColors[CHANNEL_B][COL_RED] = 0.3088;
+  trainingColors[CHANNEL_R][COL_RED] = 0.828;
+  trainingColors[CHANNEL_G][COL_RED] = 0.415;
+  trainingColors[CHANNEL_B][COL_RED] = 0.374;
 
   // Skittle: green
-  trainingColors[CHANNEL_R][COL_GREEN] = 0.5052;
-  trainingColors[CHANNEL_G][COL_GREEN] = 0.7924;
-  trainingColors[CHANNEL_B][COL_GREEN] = 0.3418;
+  trainingColors[CHANNEL_R][COL_GREEN] = 0.537;
+  trainingColors[CHANNEL_G][COL_GREEN] = 0.762;
+  trainingColors[CHANNEL_B][COL_GREEN] = 0.360;
 
   // Skittle: orange
-  trainingColors[CHANNEL_R][COL_ORANGE] = 0.9155;
-  trainingColors[CHANNEL_G][COL_ORANGE] = 0.3359;
-  trainingColors[CHANNEL_B][COL_ORANGE] = 0.2213;
+  trainingColors[CHANNEL_R][COL_ORANGE] = 0.921;
+  trainingColors[CHANNEL_G][COL_ORANGE] = 0.326;
+  trainingColors[CHANNEL_B][COL_ORANGE] = 0.210;
 
   // Skittle: yellow
-  trainingColors[CHANNEL_R][COL_YELLOW] = 0.7617;
-  trainingColors[CHANNEL_G][COL_YELLOW] = 0.5979;
-  trainingColors[CHANNEL_B][COL_YELLOW] = 0.2497;
+  trainingColors[CHANNEL_R][COL_YELLOW] = 0.690;
+  trainingColors[CHANNEL_G][COL_YELLOW] = 0.659;
+  trainingColors[CHANNEL_B][COL_YELLOW] = 0.296;
 
   // Skittle: purple
   trainingColors[CHANNEL_R][COL_PURPLE] = 0.8586;
@@ -124,6 +126,11 @@ void initializeTrainingColors() {
 void getNormalizedColor() {
   uint16_t r, g, b, c, colorTemp, lux;  
   tcs.getRawData(&r, &g, &b, &c);
+  Serial.print("RAW: ");
+  Serial.print(" R: "); Serial.print(r);
+  Serial.print(" G: "); Serial.print(g);
+  Serial.print(" B: "); Serial.println(b);
+  Serial.println();
 
   float lenVec = sqrt((float)r*(float)r + (float)g*(float)g + (float)b*(float)b);
 
@@ -131,6 +138,9 @@ void getNormalizedColor() {
   rNorm = (float)r/lenVec;
   gNorm = (float)g/lenVec;
   bNorm = (float)b/lenVec;
+
+  // Also convert to HSB:
+  RGBtoHSV(rNorm, gNorm, bNorm, &hue, &saturation, &brightness);
 }
 
 
@@ -191,6 +201,31 @@ void printColourName(int colIdx) {
   }
 }
 
+// RGB to HSV.  From https://www.cs.rit.edu/~ncs/color/t_convert.html . 
+void RGBtoHSV( float r, float g, float b, float *h, float *s, float *v ) {  
+  float minVal = min(min(r, g), b);
+  float maxVal = max(max(r, g), b);
+  *v = maxVal;       // v
+  float delta = maxVal - minVal;
+  if( maxVal != 0 )
+    *s = delta / maxVal;   // s
+  else {
+    // r = g = b = 0    // s = 0, v is undefined
+    *s = 0;
+    *h = -1;
+    return;
+  }
+  if( r == maxVal )
+    *h = ( g - b ) / delta;   // between yellow & magenta
+  else if( g == maxVal )
+    *h = 2 + ( b - r ) / delta; // between cyan & yellow
+  else
+    *h = 4 + ( r - g ) / delta; // between magenta & cyan
+  *h *= 60;       // degrees
+  if( *h < 0 )
+    *h += 360;
+}
+
 /*
  * Main Arduino functions
  */
@@ -216,6 +251,7 @@ void setup(void) {
     AFMS.begin();
     myMotor->setSpeed(60);
     myMotor->run(FORWARD);
+    delay(CHANGE_DELAY);
 
     door[0].attach(servo1Pin);
     door[1].attach(servo2Pin);
@@ -237,15 +273,18 @@ void loop(void) {
     int colClass = getColorClass();   
 
     #ifdef DEBUG
+    delay(24);
     // Step 2: Output colour
     Serial.print("R: "); Serial.print(rNorm, 3); Serial.print("  ");
     Serial.print("G: "); Serial.print(gNorm, 3); Serial.print("  ");
     Serial.print("B: "); Serial.print(bNorm, 3); Serial.print("  ");  
+    Serial.print("H: "); Serial.print(hue, 3); Serial.print("  ");
+    Serial.print("S: "); Serial.print(saturation, 3); Serial.print("  ");
+    Serial.print("B: "); Serial.print(brightness, 3); Serial.print("  ");
      
     printColourName(colClass);  
     Serial.print(" (cos: "); Serial.print(lastCosine); Serial.print(") ");
     Serial.println("");
-    delay(1000);
     #endif
 
     enqueue(colClass);
@@ -268,9 +307,9 @@ void loop(void) {
 void unjam() {
     int tmp = count;
     myMotor->run(BACKWARD);
-    delay(50);
+    delay(CHANGE_DELAY);
     myMotor->run(FORWARD);
-    delay(50);
+    delay(CHANGE_DELAY);
     noInterrupts();
     count = tmp;
     lastCount = count -1;
@@ -278,13 +317,13 @@ void unjam() {
 }
 
 void enqueue(int colClass) {
-    if (colClass == 0) {
+    if (colClass == 0) { //red
         bitSet(queue, 8);
-    } else if (colClass == 1) {
+    } else if (colClass == 1) { //green
         bitSet(queue, 13);
-    } else if (colClass == 2) {
+    } else if (colClass == 2) { //orange
         bitSet(queue, 18);
-    } else if (colClass == 3) {
+    } else if (colClass == 3) { //yellow
         bitSet(queue, 23);
     }
 }
