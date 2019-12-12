@@ -19,6 +19,8 @@ Wired up:
 
 ## Auger
 
+![auger](https://github.com/ngric/skittle-sorter/blob/master/pictures/AugerImage.jpg)
+
 ## Motor
 
 ![motor](https://github.com/ngric/skittle-sorter/blob/master/pictures/motor.jpg)
